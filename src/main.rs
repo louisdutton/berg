@@ -1,16 +1,15 @@
+mod score;
 use std::fs;
 
-// ascii codes
-const NUMERIC_START: u8 = 48;
-const ALPHA_START: u8 = 97;
-const DIFF: u8 = ALPHA_START - NUMERIC_START;
+use score::Score;
 
 fn main() {
     let src = fs::read_to_string("./examples/simple.berg").unwrap();
-    let beats: Vec<Vec<char>> = src
+
+    let beats: Vec<Vec<u32>> = src
         .split(',')
-        .map(|b| b.chars().map(|ch| (ch as u8 + DIFF) as char).collect())
+        .filter_map(|b| b.chars().map(|ch| ch.to_digit(10)).collect())
         .collect();
 
-    print!("{:?}", beats);
+    let _ = Score::from(beats).print();
 }
