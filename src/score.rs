@@ -1,3 +1,5 @@
+use crate::{Document, Meta};
+
 const BLANK: char = '-';
 const NOTE: char = 'o';
 const BORDER_HORIZONTAL: char = '─';
@@ -9,17 +11,21 @@ const BORDER_BOTTOM_RIGHT: char = '╯';
 
 #[derive(Debug)]
 pub struct Score {
+    meta: Meta,
     slices: Vec<Vec<char>>,
 }
 
 impl Score {
-    pub fn from(beats: Vec<Vec<u32>>) -> Self {
+    pub fn from(document: &Document) -> Self {
         Score {
-            slices: beats
+            meta: document.meta.clone(),
+            slices: document
+                .content
+                .beats
                 .iter()
                 .map(|b| {
                     let mut v = vec![BLANK; 12];
-                    v[11 - b[0] as usize] = NOTE;
+                    v[12 - b[0] as usize] = NOTE;
                     v
                 })
                 .collect(),
@@ -29,6 +35,8 @@ impl Score {
     pub fn print(&self) {
         let height = 12;
 
+        println!("{}", self.meta.title);
+        println!("By {}", self.meta.composer);
         println!(
             "{}{:3}{}",
             BORDER_TOP_LEFT, BORDER_HORIZONTAL, BORDER_TOP_RIGHT,
